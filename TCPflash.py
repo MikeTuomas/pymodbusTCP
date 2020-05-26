@@ -28,6 +28,7 @@ def blink():
     while keep_going:
         # open or reconnect TCP to server
         if not c.is_open():
+            print('kissat on parhaita ')
             if not c.open():
                 print("unable to connect to "+SERVER_HOST+":"+str(SERVER_PORT))
 
