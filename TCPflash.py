@@ -15,7 +15,6 @@ def key_capture_thread():
 
 def blink():
     th.Thread(target=key_capture_thread, args=(), name='key_capture_thread', daemon=True).start()
-    print('aaaa')
     SERVER_HOST = "192.168.81.36"
     SERVER_PORT = 502
 
@@ -30,20 +29,17 @@ def blink():
 
     addr = 7206
     toggle = True
-    print('cc')
     while keep_going:
-        print('bbb')
         # open or reconnect TCP to server
         if not c.is_open():
             if not c.open():
                 print("unable to connect to "+SERVER_HOST+":"+str(SERVER_PORT))
 
-        # if open() is ok, write coils (modbus function 0x01)
+        # if open() is ok, write
         if c.is_open():
-            # write 4 bits in modbus address 0 to 3
+            
             print("")
             print("write bits")
-            print("----------")
             print("")
             
             is_ok = c.write_single_coil(addr, toggle)
@@ -57,7 +53,6 @@ def blink():
 
             print("")
             print("read bits")
-            print("---------")
             print("")
             bits = c.read_coils(addr, 1)
             if bits:
@@ -65,7 +60,7 @@ def blink():
             else:
                 print("unable to read")
         toggle = not toggle
-        # sleep 2s before next polling
+        # sleep before next polling
         time.sleep(0.5)
 
 blink()
