@@ -9,10 +9,6 @@ def key_capture_thread():
     input()
     keep_going = False
 
-
-
-
-
 def blink():
     th.Thread(target=key_capture_thread, args=(), name='key_capture_thread', daemon=True).start()
     SERVER_HOST = "192.168.81.36"
