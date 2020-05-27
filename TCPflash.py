@@ -28,7 +28,7 @@ def blink():
     while keep_going:
         # open or reconnect TCP to server
         if not c.is_open():
-            Print('Yhteys ei ole auki')
+            print('Yhteys ei ole auki')
             if not c.open():
                 print("unable to connect to "+SERVER_HOST+":"+str(SERVER_PORT))
 
