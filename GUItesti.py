@@ -6,27 +6,21 @@ import struct
 import time
 import numpy as np 
 import threading as th
-from guiLoop import guiLoop, stopLoop  
-
-class stopper:
-    def __init__(self):
-        self.state = 0
-    def stop(self):
-        self.state = 1
-class checkker:
-    def __init__(self):
-        self.state = 0
-    
-
-def stop_sending():
-    
-    s.stop()
+import guiLoop   
 
 def send_button_pressed():
-    stoppaaja = stopper()
-    saie = th.Thread(target=send_message(stoppaaja), args=(), name='send_message', daemon=True).start()
-    
-def send_message(stop):
+    state = []
+    continous_run = chk_cont.get()
+    generator = send_message(btn_start, state, continous_run)
+    btn_start['text'] = 'Stop'  
+    def turn_off():
+        state.append('stop')
+        btn_start['command'] = send_button_pressed
+        btn_start['text'] = 'Send'
+    btn_start['command'] = turn_off
+
+@guiLoop.guiLoop    
+def send_message(state, cont):
     port = 502
     c = ModbusClient()
 
@@ -40,8 +34,7 @@ def send_message(stop):
     address = np.int16(txt_address.get())
     lenght = np.int16(txt_lenght.get())
     fc = txt_fc.get()
-    running = 1
-    while running: #tähän jatkuva rekisterin päivitys
+    while state != ['stop']: #tähän jatkuva rekisterin päivitys
     # open or reconnect TCP to server
         if not c.is_open():
             if not c.open():
@@ -60,7 +53,6 @@ def send_message(stop):
                 bits = c.read_discrete_inputs(address, lenght)
                 print('Input status',bits)
                 
-
             elif fc in ["04"]:
 
                 print("")
@@ -79,45 +71,43 @@ def send_message(stop):
 
             else: print("Wrong fuction code")
         
-        if not chk_cont:
-            running = 0
-        if stop.state:
-            running = 0
+        if cont == False:
+            state.append('stop')
+            btn_start['command'] = send_button_pressed
+            btn_start['text'] = 'Send'
         # sleep before next polling
         yield(0.5)
+
     c.close()
     print("Connection is closed")
-
-
 
 window = Tk()
 window.title('Modbus TCP test client')
 # window.geometry('320x200')
-s = stopper()
 lbl_modbus = Label(window, text='Modbus server IP address')
-lbl_modbus.grid(column=0,row=0)
-txt_modbus_ip = Entry(window, width=20)
-txt_modbus_ip.grid(column=1, row=0)
+lbl_modbus.grid(column=0,row=0, pady = 2, sticky = W)
+txt_modbus_ip = Entry(window, width=23)
+txt_modbus_ip.grid(column=1, row=0, pady = 2, sticky = W)
 txt_modbus_ip.focus()
-txt_modbus_ip.insert('0','192.168.81.36')
+txt_modbus_ip.insert('0','192.168.81.45')
 
 lbl_fc = Label(window, text='Function code')
-lbl_fc.grid(column=0, row=1)
+lbl_fc.grid(column=0, row=1, stick = W, pady = 2)
 txt_fc = Combobox(window)
 txt_fc['values'] = ('02', '04')
-txt_fc.current(1)
-txt_fc.grid(column=1, row=1)
+txt_fc.current(0)
+txt_fc.grid(column=1, row=1, pady = 2, sticky = W)
 
 lbl_address = Label(window, text='Starting register address')
-lbl_address.grid(column=0, row=2)
-txt_address = Entry(window, width=20)
-txt_address.grid(column=1,row=2)
-txt_address.insert('0','7901')
+lbl_address.grid(column=0, row=2, stick = W, pady = 2)
+txt_address = Entry(window, width=23)
+txt_address.grid(column=1,row=2, pady = 2)
+txt_address.insert('0','7202')
 
 lbl_lenght = Label(window, text='register lenght')
-lbl_lenght.grid(column=0,row=3)
-txt_lenght = Entry(window, width=20)
-txt_lenght.grid(column=1,row=3)
+lbl_lenght.grid(column=0,row=3, stick = W, pady = 2)
+txt_lenght = Entry(window, width=23)
+txt_lenght.grid(column=1,row=3, pady = 2)
 txt_lenght.insert('0','1')
 
 # txt_ = scrolledtext.ScrolledText(window, width=40, height=10, state='disabled')
@@ -128,11 +118,6 @@ chk_continous_send = Checkbutton(window, text='Send continously', var=chk_cont)
 chk_continous_send.grid(column=3,row=0)
 
 btn_start = Button(window, text='Send', command=send_button_pressed)
-btn_start.grid(column=2,row=0)
-
-btn_stop = Button(window, text='Stop', command=stop_sending)
-btn_stop.grid(column=2,row=1)
-
-
+btn_start.grid(column=2,row=0, pady = 2)
 
 window.mainloop()
