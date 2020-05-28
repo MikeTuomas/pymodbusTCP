@@ -10,9 +10,8 @@ def key_capture_thread():
     input()
     keep_going = False
 
-def blink():
+def send_message():
     th.Thread(target=key_capture_thread, args=(), name='key_capture_thread', daemon=True).start()
-    txt_modbus_ip = "192.168.81.45"
     port = 502
 
     c = ModbusClient()
@@ -39,7 +38,7 @@ def blink():
             
             time.sleep(1)
 
-            if fc == "02"
+            if fc == "02":
 
                 print("")
                 print("Message")
@@ -48,7 +47,7 @@ def blink():
                 print(bits)
                 
 
-            else if fc == "04"
+            else if fc == "04":
 
                 print("")
                 print("Message")
