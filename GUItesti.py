@@ -69,7 +69,7 @@ def send_message(state, cont):
                 else:
                     print("Unable to read")
 
-            else: print("Wrong fuction code")
+            else: print("Wrong function code")
         
         if cont == False:
             state.append('stop')
