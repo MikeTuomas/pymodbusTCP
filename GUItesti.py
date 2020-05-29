@@ -68,6 +68,18 @@ def send_message(state, cont):
                     
                 else:
                     print("Unable to read")
+            elif fc in ["01"]:
+                print("")
+                print("Message")
+                print("")
+                bits = c.read_coils(address, lenght)
+                print('Input status',bits)
+            elif fc in ["05"]:
+                print("")
+                print("Message")
+                print("")
+                bits = c.write_single_coil(address, lenght)
+                print('Input status',bits)
 
             else: print("Wrong function code")
         
@@ -94,7 +106,7 @@ txt_modbus_ip.insert('0','192.168.81.45')
 lbl_fc = Label(window, text='Function code')
 lbl_fc.grid(column=0, row=1, stick = W, pady = 2)
 txt_fc = Combobox(window)
-txt_fc['values'] = ('02', '04')
+txt_fc['values'] = ('01','02', '04','05')
 txt_fc.current(0)
 txt_fc.grid(column=1, row=1, pady = 2, sticky = W)
 
@@ -104,7 +116,7 @@ txt_address = Entry(window, width=23)
 txt_address.grid(column=1,row=2, pady = 2)
 txt_address.insert('0','7202')
 
-lbl_lenght = Label(window, text='register lenght')
+lbl_lenght = Label(window, text='Register lenght')
 lbl_lenght.grid(column=0,row=3, stick = W, pady = 2)
 txt_lenght = Entry(window, width=23)
 txt_lenght.grid(column=1,row=3, pady = 2)
